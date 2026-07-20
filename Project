@@ -1,0 +1,38 @@
+-- Old properties vs compliance issues
+SELECT 
+    p.Build_Year,
+    COUNT(c.Issue_Flag) AS TotalIssues
+FROM Properties p
+JOIN Compliance c ON p.Property_ID = c.Property_ID
+WHERE c.Issue_Flag = 'Yes'
+GROUP BY p.Build_Year
+ORDER BY TotalIssues DESC;
+
+-- Vulnerability vs repair frequency
+SELECT 
+    r.Property_ID,
+    COUNT(*) AS TotalRepairs,
+    SUM(CASE WHEN res.Vulnerability = 'Yes' THEN 1 ELSE 0 END) AS VulnerableResidents
+FROM Repairs r
+JOIN Residents res ON r.Property_ID = res.Property_ID
+GROUP BY r.Property_ID
+ORDER BY VulnerableResidents DESC;
+
+-- Compliance risk by property
+SELECT 
+    Property_ID,
+    COUNT(*) AS TotalIssues
+FROM Compliance
+WHERE Issue_Flag = 'Yes'
+GROUP BY Property_ID
+ORDER BY TotalIssues DESC;
+
+-- Repairs by region
+SELECT 
+    Region,
+    COUNT(*) AS TotalRepairs,
+    AVG(Repair_Cost) AS AvgCost
+FROM Repairs r
+JOIN Properties p ON r.Property_ID = p.Property_ID
+GROUP BY Region
+ORDER BY TotalRepairs DESC;
